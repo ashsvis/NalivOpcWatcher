@@ -22,6 +22,7 @@ namespace OpcClient
         public FormOpcClient()
         {
             InitializeComponent();
+            lvValues.SetDoubleBuffered(true);
             var mif = new MemIniFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OpcClient.ini"));
             items = mif.ReadSectionKeys("Items");
             items.ToList().ForEach(item => descriptors.Add(item, mif.ReadString("Items", item, "")));

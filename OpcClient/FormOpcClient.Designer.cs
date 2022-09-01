@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lvValues = new System.Windows.Forms.ListView();
+            this.lvValues = new OpcClient.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // lvValues
@@ -47,6 +47,8 @@
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4});
+            this.lvValues.FullRowSelect = true;
+            this.lvValues.GridLines = true;
             this.lvValues.HideSelection = false;
             this.lvValues.Location = new System.Drawing.Point(12, 12);
             this.lvValues.Name = "lvValues";
@@ -61,6 +63,11 @@
             // 
             this.columnHeader1.Text = "Address";
             this.columnHeader1.Width = 360;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Дескриптор";
+            this.columnHeader5.Width = 340;
             // 
             // columnHeader2
             // 
@@ -78,11 +85,6 @@
             this.columnHeader4.Text = "Time";
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 180;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Дескриптор";
-            this.columnHeader5.Width = 340;
             // 
             // FormOpcClient
             // 
@@ -103,7 +105,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView lvValues;
+        private ListViewEx lvValues;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
