@@ -2,34 +2,34 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// Общие сведения об этой сборке предоставляются следующим набором
+// Управление общими сведениями о сборке осуществляется с помощью 
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("NalivOpcClient")]
+[assembly: AssemblyTitle("OpcClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NalivOpcClient")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyProduct("OpcClient")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Установка значения False для параметра ComVisible делает типы в этой сборке невидимыми
-// для компонентов COM. Если необходимо обратиться к типу в этой сборке через
+// Параметр ComVisible со значением FALSE делает типы в сборке невидимыми 
+// для COM-компонентов.  Если требуется обратиться к типу в этой сборке через 
 // COM, задайте атрибуту ComVisible значение TRUE для этого типа.
-[assembly: ComVisible(false)]
+[assembly: ComVisible(true)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("fa6708a4-deb2-474a-b451-185eaca5e32c")]
+[assembly: Guid("f6e4195a-e5bb-4c3f-a9e4-e54d3e4b0c56")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //
 //      Основной номер версии
-//      Дополнительный номер версии
-//   Номер сборки
+//      Дополнительный номер версии 
+//      Номер построения
 //      Редакция
 //
-// Можно задать все значения или принять номер сборки и номер редакции по умолчанию.
+// Можно задать все значения или принять номер построения и номер редакции по умолчанию, 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
