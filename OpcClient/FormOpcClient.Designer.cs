@@ -33,6 +33,7 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // lvValues
@@ -42,13 +43,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvValues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
+            this.columnHeader5,
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4});
             this.lvValues.HideSelection = false;
             this.lvValues.Location = new System.Drawing.Point(12, 12);
             this.lvValues.Name = "lvValues";
-            this.lvValues.Size = new System.Drawing.Size(737, 497);
+            this.lvValues.Size = new System.Drawing.Size(1052, 497);
             this.lvValues.TabIndex = 0;
             this.lvValues.UseCompatibleStateImageBehavior = false;
             this.lvValues.View = System.Windows.Forms.View.Details;
@@ -58,7 +60,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Address";
-            this.columnHeader1.Width = 400;
+            this.columnHeader1.Width = 360;
             // 
             // columnHeader2
             // 
@@ -77,11 +79,16 @@
             this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 180;
             // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Дескриптор";
+            this.columnHeader5.Width = 340;
+            // 
             // FormOpcClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 521);
+            this.ClientSize = new System.Drawing.Size(1076, 521);
             this.Controls.Add(this.lvValues);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -101,6 +108,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }
 

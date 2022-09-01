@@ -50,6 +50,7 @@
     <Compile Include="FormOpcClient.Designer.cs">
       <DependentUpon>FormOpcClient.cs</DependentUpon>
     </Compile>
+    <Compile Include="MemIniFile.cs" />
     <Compile Include="OpcBridgeSupport.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
