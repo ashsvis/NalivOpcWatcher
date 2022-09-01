@@ -48,7 +48,7 @@
             this.lvValues.HideSelection = false;
             this.lvValues.Location = new System.Drawing.Point(12, 12);
             this.lvValues.Name = "lvValues";
-            this.lvValues.Size = new System.Drawing.Size(791, 319);
+            this.lvValues.Size = new System.Drawing.Size(737, 497);
             this.lvValues.TabIndex = 0;
             this.lvValues.UseCompatibleStateImageBehavior = false;
             this.lvValues.View = System.Windows.Forms.View.Details;
@@ -81,7 +81,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(815, 343);
+            this.ClientSize = new System.Drawing.Size(761, 521);
             this.Controls.Add(this.lvValues);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
