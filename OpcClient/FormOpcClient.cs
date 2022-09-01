@@ -14,6 +14,7 @@ namespace OpcClient
     {
         OpcBridgeSupport opc = new OpcBridgeSupport();
         private BackgroundWorker worker = new BackgroundWorker() { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
+        string[] list;
 
         public FormOpcClient()
         {
@@ -29,22 +30,34 @@ namespace OpcClient
             var w = (BackgroundWorker)sender;
             string server = "Lectus.OPC.1";
             var group ="{" + $"{Guid.NewGuid()}".ToUpper() + "}";
+            var props = opc.GetProps(server)
+                .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(item => item.Trim('"').Split(new char[] { '=' })[0]).ToArray();
+            string[] values = new string[props.Length];
             while (!w.CancellationPending)
             {
-                string item1 = "ПНВЦ.Эстакада 4.Путь 12.Бензин.Стояк 11.HRADC1VAL";
-                string item2 = "ПНВЦ.Эстакада 4.Путь 12.Бензин.Стояк 11.HRSTOPCNT";
-                string value = opc.FetchItem(server, group, item1);
-                w.ReportProgress(0, value);
-                Thread.Sleep(500);
-                value = opc.FetchItem(server, group, item2);
-                w.ReportProgress(0, value);
-                Thread.Sleep(500);
+                for (var i = 0; i < props.Length; i++)
+                    values[i] = string.Concat(props[i], ';', opc.FetchItem(server, group, props[i]));
+                w.ReportProgress(values.Length, values);
+                Thread.Sleep(1000);
             }
         }
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            tbValue.Text = $"{e.UserState}";
+            list = (string[])e.UserState;
+            lvValues.VirtualListSize = e.ProgressPercentage;
+            lvValues.Invalidate();
+        }
+
+        private void lvValues_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            e.Item = new ListViewItem();
+            var vals = list[e.ItemIndex].Split(';');
+            e.Item.Text = vals[0];
+            e.Item.SubItems.Add(vals[1]);
+            e.Item.SubItems.Add(vals[2]);
+            e.Item.SubItems.Add(vals[3]);
         }
 
         private void FormOpcClient_Load(object sender, EventArgs e)
@@ -103,8 +116,8 @@ namespace OpcClient
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var item = listBox1.SelectedItem.ToString().Trim('"').Split(new char[] { '=' })[0];
-            tbItem.Text = item;
+            //var item = listBox1.SelectedItem.ToString().Trim('"').Split(new char[] { '=' })[0];
+            //tbItem.Text = item;
         }
 
         private void btnAddItem_Click(object sender, EventArgs e)
