@@ -12,32 +12,34 @@ namespace OpcClient
 {
     public partial class FormOpcClient : Form
     {
-        private OpcBridgeSupport _opc;
-        private string server;
+        OpcBridgeSupport opc = new OpcBridgeSupport();
         private BackgroundWorker worker = new BackgroundWorker() { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
 
         public FormOpcClient()
         {
             InitializeComponent();
-            //_opc = new OpcBridgeSupport();
             worker.DoWork += Worker_DoWork;
             worker.ProgressChanged += Worker_ProgressChanged;
-            worker.RunWorkerAsync();
+            worker.RunWorkerAsync(opc);
         }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            var opc = new OpcBridgeSupport();
+            var opc = (OpcBridgeSupport)e.Argument;
             var w = (BackgroundWorker)sender;
             string server = "Lectus.OPC.1";
+            var group ="{" + $"{Guid.NewGuid()}".ToUpper() + "}";
             while (!w.CancellationPending)
             {
-                string item = "ПНВЦ.Эстакада 4.Путь 12.Бензин.Стояк 11.HRADC1VAL";
-                string value = opc.FetchItem(server, "group1", item);
+                string item1 = "ПНВЦ.Эстакада 4.Путь 12.Бензин.Стояк 11.HRADC1VAL";
+                string item2 = "ПНВЦ.Эстакада 4.Путь 12.Бензин.Стояк 11.HRSTOPCNT";
+                string value = opc.FetchItem(server, group, item1);
                 w.ReportProgress(0, value);
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
+                value = opc.FetchItem(server, group, item2);
+                w.ReportProgress(0, value);
+                Thread.Sleep(500);
             }
-            opc.FinitOpc();
         }
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -68,29 +70,30 @@ namespace OpcClient
 
         private void ExploreOpcServers()
         {
-            var servers = new HashSet<string>();
-            foreach (var item in _opc.GetServers().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(item => item.Split('=')[1]))
-                servers.Add(item);
-            cbOpcServer.Items.Clear();
-            foreach (var server in servers.OrderBy(item => item))
-                cbOpcServer.Items.Add(server);
+            //var servers = new HashSet<string>();
+            //foreach (var item in _opc.GetServers().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(item => item.Split('=')[1]))
+            //    servers.Add(item);
+            //cbOpcServer.Items.Clear();
+            //foreach (var server in servers.OrderBy(item => item))
+            //    cbOpcServer.Items.Add(server);
         }
 
         private void FormOpcClient_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //_opc.FinitOpc();
             worker.CancelAsync();
+            opc.FinitOpc();
+            //worker.Dispose();
         }
 
         private void cbOpcServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            var props = _opc.GetProps(cbOpcServer.Text).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            listBox1.Items.Clear();
-            foreach (var line in props)
-            {
-                listBox1.Items.Add(line);
-            }
-            GC.Collect();
+            //var props = _opc.GetProps(cbOpcServer.Text).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            //listBox1.Items.Clear();
+            //foreach (var line in props)
+            //{
+            //    listBox1.Items.Add(line);
+            //}
+            //GC.Collect();
         }
 
         private void btnOpcServersRefresh_Click(object sender, EventArgs e)
@@ -106,12 +109,12 @@ namespace OpcClient
 
         private void btnAddItem_Click(object sender, EventArgs e)
         {
-            _opc.AddItem(cbOpcServer.Text, "group1", tbItem.Text);
+            //opc.AddItem(cbOpcServer.Text, "group1", tbItem.Text);
         }
 
         private void btnFetch_Click(object sender, EventArgs e)
         {
-            tbValue.Text = _opc.FetchItem(server, "group1", tbItem.Text);
+            //tbValue.Text = _opc.FetchItem(server, "group1", tbItem.Text);
         }
     }
 }
