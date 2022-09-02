@@ -16,6 +16,7 @@ namespace OpcClient
         readonly OpcBridgeSupport opc = new OpcBridgeSupport();
         readonly BackgroundWorker worker = new BackgroundWorker() { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
         string[] list;
+        string[] risers;
         string[] items;
         Dictionary<string, string> descriptors = new Dictionary<string, string>();
 
@@ -24,36 +25,40 @@ namespace OpcClient
             InitializeComponent();
             lvValues.SetDoubleBuffered(true);
             var mif = new MemIniFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OpcClient.ini"));
+            risers = mif.ReadSectionValues("Risers");
             items = mif.ReadSectionKeys("Items");
             items.ToList().ForEach(item => descriptors.Add(item, mif.ReadString("Items", item, "")));
             worker.DoWork += Worker_DoWork;
             worker.ProgressChanged += Worker_ProgressChanged;
-            worker.RunWorkerAsync(new Tuple<OpcBridgeSupport, string[], Dictionary<string, string>>(opc, items, descriptors));
+            worker.RunWorkerAsync(new Tuple<OpcBridgeSupport, string[], string[], Dictionary<string, string>>(opc, risers, items, descriptors));
         }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            var arg = (Tuple<OpcBridgeSupport, string[], Dictionary<string, string>>)e.Argument;
+            var arg = (Tuple<OpcBridgeSupport, string[], string[], Dictionary<string, string>>)e.Argument;
             var opc = arg.Item1;
-            var items = arg.Item2;
-            var descs = arg.Item3;
+            var risers = arg.Item2;
+            var items = arg.Item3;
+            var descs = arg.Item4;
             var w = (BackgroundWorker)sender;
             string server = "Lectus.OPC.1";
             var group ="{" + $"{Guid.NewGuid()}".ToUpper() + "}";
             // получаем все доступные переменные, отдаваемые OPC сервером
-            var props = opc.GetProps(server)
-                .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(item => item.Trim('"').Split(new char[] { '=' })[0]);
+            //var props = opc.GetProps(server)
+            //    .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+            //    .Select(item => item.Trim('"').Split(new char[] { '=' })[0]);
             // определяем список для накопления переменных, указанных в файле настроек
             var addresses = new List<string>();
+            foreach (var riser in risers)
+                items.ToList().ForEach(item => addresses.Add(riser + '.' + item));
             // группируем переменные по начальным значениям
-            foreach (var groupProps in props.GroupBy(prop => string.Join(".", prop.Split('.'), 0, prop.Split('.').Length - 1)))
-                items.ToList().ForEach(item => addresses.Add(groupProps.Key + '.' + item));
+            //foreach (var groupProps in props.GroupBy(prop => string.Join(".", prop.Split('.'), 0, prop.Split('.').Length - 1)))
+            //    items.ToList().ForEach(item => addresses.Add(groupProps.Key + '.' + item));
             // определяем список для накопления ответов от OPC сервера
             var values = new string[addresses.Count];
             var descriptors = new string[addresses.Count];
-            for (var i = 0; i < addresses.Count; i++)
-                descriptors[i] = descs[items[i]];
+            //for (var i = 0; i < addresses.Count; i++)
+            //    descriptors[i] = descs[items[i]];
             while (!w.CancellationPending)
             {
                 // собираем ответы
