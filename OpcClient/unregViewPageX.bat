@@ -1,2 +1,2 @@
-C:\Windows\Sysem32\regsvr32.exe D:\WorkOld\OpcClient\OpcBridgeServer\OpcBridgeServer.dll /unregister
+C:\Windows\Sysem32\regsvr32.exe D:\Work\NalivOpcWatcher\OpcClient\OpcBridgeServer\OpcBridgeServer.dll /unregister
 @pause

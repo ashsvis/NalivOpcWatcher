@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="MemIniFile.cs" />
     <Compile Include="OpcBridgeSupport.cs" />
+    <Compile Include="OpcItemAnswer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormOpcClient.resx">
