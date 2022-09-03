@@ -22,9 +22,16 @@ namespace OpcClient
         {
             InitializeComponent();
             lvValues.SetDoubleBuffered(true);
-            var mif = new MemIniFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OpcClient.ini"));            
+            var mif = new MemIniFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OpcClient.ini"));
             // перечень адресов стояков налива
-            var risers = mif.ReadSectionValues("Risers");
+            var risers = new List<string>();
+            var prefix = mif.ReadString("Risers", "Prefix", "");
+            var first = mif.ReadInteger("Risers", "First", 0);
+            var last = mif.ReadInteger("Risers", "Last", 0);
+            var step = mif.ReadInteger("Risers", "Step", 1);
+            for (var i = first; i <= last; i += step)
+                risers.Add($"{prefix}.Стояк {i}");
+
             // перечень имён переменных опроса
             var items = mif.ReadSectionKeys("Items");
             // заполняем словарь дескрипторов для имён переменных опроса
