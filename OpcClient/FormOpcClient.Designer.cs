@@ -36,11 +36,11 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lvChanges = new OpcClient.ListViewEx();
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -134,6 +134,12 @@
             this.lvChanges.UseCompatibleStateImageBehavior = false;
             this.lvChanges.View = System.Windows.Forms.View.Details;
             this.lvChanges.VirtualMode = true;
+            this.lvChanges.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvChanges_RetrieveVirtualItem);
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Time";
+            this.columnHeader10.Width = 170;
             // 
             // columnHeader6
             // 
@@ -156,11 +162,6 @@
             this.columnHeader9.Text = "New Value";
             this.columnHeader9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.columnHeader9.Width = 75;
-            // 
-            // columnHeader10
-            // 
-            this.columnHeader10.Text = "Time";
-            this.columnHeader10.Width = 170;
             // 
             // FormOpcClient
             // 

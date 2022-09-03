@@ -22,11 +22,5 @@ namespace OpcClient
         public string Descriptor { get; set; }
         public string Quality { get; set; }
         public DateTime SnapTime { get; set; }
-
-        public string GetItem()
-        {
-            var values = Address.Split('.');
-            return values.Length == 6 ? values[5] : values[0];
-        }
     }
 }

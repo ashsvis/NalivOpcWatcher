@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace OpcClient
@@ -15,8 +17,11 @@ namespace OpcClient
     {
         readonly OpcBridgeSupport opc = new OpcBridgeSupport();
         readonly BackgroundWorker worker = new BackgroundWorker() { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
-        OpcItemAnswer[] list;
+        OpcItemAnswer[] listValues;
+        OpcItemChange[] listChanges;
         readonly Dictionary<string, string> descriptors = new Dictionary<string, string>();
+        public static ConcurrentDictionary<string, OpcItemAnswer> OpcItemAnswers = new ConcurrentDictionary<string, OpcItemAnswer>();
+        public static ConcurrentDictionary<string, OpcItemChange> OpcItemChanges = new ConcurrentDictionary<string, OpcItemChange>();
 
         public FormOpcClient()
         {
@@ -36,22 +41,20 @@ namespace OpcClient
             var items = mif.ReadSectionKeys("Items");
             // заполняем словарь дескрипторов для имён переменных опроса
             items.ToList().ForEach(item => descriptors.Add(item, mif.ReadString("Items", item, "")));
+
             // заполняем список адресов переменных опроса
-            var addresses = new List<Tuple<string, string>>();
             foreach (var riser in risers)
-                items.ToList().ForEach(item => addresses.Add(new Tuple<string, string>(riser + '.' + item, descriptors[item])));
+                items.ToList().ForEach(item => OpcItemAnswers.TryAdd(riser + '.' + item, new OpcItemAnswer(riser + '.' + item, "", descriptors[item])));
 
             // настраиваем и запускаем на выполнение фоновый поток для опроса значений переменных
             worker.DoWork += Worker_DoWork;
             worker.ProgressChanged += Worker_ProgressChanged;
-            worker.RunWorkerAsync(new Tuple<OpcBridgeSupport, Tuple<string, string>[]>(opc, addresses.ToArray()));
+            worker.RunWorkerAsync(opc);
         }
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            var arg = (Tuple<OpcBridgeSupport, Tuple<string, string>[]>)e.Argument;
-            var opc = arg.Item1;
-            var addresses = arg.Item2;
+            var opc = (OpcBridgeSupport)e.Argument;
             var w = (BackgroundWorker)sender;
             string server = "Lectus.OPC.1";
             var group ="{" + $"{Guid.NewGuid()}".ToUpper() + "}";
@@ -59,33 +62,83 @@ namespace OpcClient
             while (!w.CancellationPending)
             {
                 var values = new List<OpcItemAnswer>();
+                var changes = new List<OpcItemChange>();
                 // собираем ответы
-                for (var i = 0; i < addresses.Length; i++)
+                foreach (var address in OpcItemAnswers.Keys)
                 {
-                    var answer = opc.FetchItem(server, group, addresses[i].Item1);
-                    values.Add(new OpcItemAnswer(addresses[i].Item1, answer, addresses[i].Item2));
+                    if (OpcItemAnswers.TryGetValue(address, out var valueItem))
+                    {
+                        string content = opc.FetchItem(server, group, address);
+                        var answerItem = new OpcItemAnswer(address, content, valueItem.Descriptor);
+                        if (OpcItemAnswers.TryUpdate(address, answerItem, valueItem))
+                        {
+                            values.Add(answerItem);
+                            if (valueItem.Value != answerItem.Value)
+                            {
+                                var newItem = new OpcItemChange
+                                {
+                                    SnapTime = answerItem.SnapTime,
+                                    Address = address,
+                                    Descriptor = answerItem.Descriptor,
+                                    ValueOld = "",
+                                    ValueNew = answerItem.Value.ToString()
+                                };
+                                if (OpcItemChanges.TryGetValue(address, out var oldItem))
+                                {
+                                    newItem.ValueOld = oldItem.ValueNew;
+                                    if (OpcItemChanges.TryUpdate(address, newItem, oldItem))
+                                        changes.Add(newItem);
+                                }
+                                else
+                                    if (OpcItemChanges.TryAdd(address, newItem))
+                                        changes.Add(newItem);
+                            }
+                        }
+                    }
                 }
-                w.ReportProgress(values.Count, values.ToArray());
+                w.ReportProgress(0, values.ToArray());
+                w.ReportProgress(1, changes.ToArray());
                 Thread.Sleep(1000);
             }
         }
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            list = (OpcItemAnswer[])e.UserState;
-            lvValues.VirtualListSize = e.ProgressPercentage;
-            lvValues.Invalidate();
+            switch (e.ProgressPercentage)
+            {
+                case 0:
+                    listValues = (OpcItemAnswer[])e.UserState;
+                    lvValues.VirtualListSize = listValues.Length;
+                    lvValues.Invalidate();
+                    break;
+                case 1:
+                    listChanges = (OpcItemChange[])e.UserState;
+                    lvChanges.VirtualListSize = listChanges.Length;
+                    lvChanges.Invalidate();
+                    break;
+            }
         }
 
         private void lvValues_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
             e.Item = new ListViewItem();
-            var answerItem = list[e.ItemIndex];
+            var answerItem = listValues[e.ItemIndex];
             e.Item.Text = answerItem.Address;
             e.Item.SubItems.Add(answerItem.Descriptor);
             e.Item.SubItems.Add(answerItem.Value.ToString());
             e.Item.SubItems.Add(answerItem.Quality);
             e.Item.SubItems.Add(answerItem.SnapTime.ToString());
+        }
+
+        private void lvChanges_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            e.Item = new ListViewItem();
+            var changeItem = listChanges[e.ItemIndex];
+            e.Item.Text = changeItem.SnapTime.ToString();
+            e.Item.SubItems.Add(changeItem.Address);
+            e.Item.SubItems.Add(changeItem.Descriptor);
+            e.Item.SubItems.Add(changeItem.ValueOld);
+            e.Item.SubItems.Add(changeItem.ValueNew);
         }
 
         private void FormOpcClient_Load(object sender, EventArgs e)
